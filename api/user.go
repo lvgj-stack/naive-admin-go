@@ -96,6 +96,7 @@ func (user) Profile(c *gin.Context) {
 		Address:  params.Address,
 		Email:    params.Email,
 		NickName: params.NickName,
+		Avatar:   params.Avatar,
 	}).Error
 	if err != nil {
 		Resp.Err(c, 20001, err.Error())

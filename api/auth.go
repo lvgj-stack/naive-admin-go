@@ -66,7 +66,7 @@ func (auth) Login(c *gin.Context) {
 		Select("code").Find(&roleNames)
 
 	currentRole := ""
-	if len(roleNames) > 1 {
+	if len(roleNames) > 0 {
 		currentRole = roleNames[0]
 	}
 	Resp.Succ(c, inout.LoginRes{

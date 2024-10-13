@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"log"
 
 	"naive-admin-go/db"
 	"naive-admin-go/inout"
@@ -21,6 +22,8 @@ func (role) PermissionsTree(c *gin.Context) {
 	var uid, _ = c.Get("uid")
 	jwtToken, _ := c.Get("jwt_token")
 	claim := jwtToken.(*utils.CustomClaims)
+	log.Println(uid, claim)
+	log.Println(claim.CurrentRoleCode)
 	var adminRole int64
 	db.Dao.Model(model.UserRolesRole{}).Where("userId=? and roleId=?", uid, claim.CurrentRoleCode).Count(&adminRole)
 	orm := db.Dao.Model(model.Permission{}).Where("parentId is NULL").Order("`order` Asc")
