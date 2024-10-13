@@ -1,11 +1,13 @@
 package main
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
+
 	"naive-admin-go/config"
 	"naive-admin-go/db"
 	"naive-admin-go/router"
-	"time"
 )
 
 func main() {
@@ -15,5 +17,5 @@ func main() {
 	config.Init()
 	db.Init()
 	router.Init(app)
-	app.Run(":8800")
+	app.Run(":18085")
 }

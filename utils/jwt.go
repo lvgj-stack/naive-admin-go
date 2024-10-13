@@ -2,9 +2,10 @@ package utils
 
 import (
 	"errors"
-	"github.com/golang-jwt/jwt/v4"
 	"os"
 	"time"
+
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // 一些常量
@@ -17,7 +18,11 @@ var (
 
 // CustomClaims 载荷，可以加一些自己需要的信息
 type CustomClaims struct {
-	UID int
+	UID             int      `json:"UID,omitempty"`
+	UserId          int      `json:"userId,omitempty"`
+	Username        string   `json:"username,omitempty"`
+	RoleCodes       []string `json:"roleCodes,omitempty"`
+	CurrentRoleCode string   `json:"currentRoleCode,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -29,7 +34,7 @@ type JWT struct {
 // NewJWT 新建一个jwt实例
 func NewJWT() *JWT {
 	return &JWT{
-		SigningKey:[]byte(os.Getenv("JWT_SIGNING_KEY")),
+		SigningKey: []byte(os.Getenv("JWT_SIGNING_KEY")),
 	}
 }
 
@@ -40,20 +45,28 @@ func (j *JWT) createToken(claims CustomClaims) (string, error) {
 }
 
 // GenerateToken 生成令牌
-func GenerateToken( uId int) string {
+func GenerateToken(uId, userId int, username, currentRoleCode string, roleCodes []string) string {
 	j := NewJWT()
 	type cus struct {
-		UID int
+		UID             int
+		UserId          int
+		Username        string
+		RoleCodes       []string
+		CurrentRoleCode string
 		jwt.RegisteredClaims
 	}
 	claims := cus{
 		uId,
+		userId,
+		username,
+		roleCodes,
+		currentRoleCode,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
 		},
 	}
 
-	token, err :=  j.createToken(CustomClaims(claims))
+	token, err := j.createToken(CustomClaims(claims))
 	if err != nil {
 
 		return err.Error()
@@ -75,7 +88,7 @@ func (j *JWT) RefreshToken(tokenString string) (string, error) {
 	}
 	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
 		jwt.TimeFunc = time.Now
-		claims.ExpiresAt =jwt.NewNumericDate(time.Now().Add(time.Hour))
+		claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Hour))
 		return j.createToken(*claims)
 	}
 	return "", TokenInvalid
@@ -108,4 +121,3 @@ func (j *JWT) ParseToken(tokenString string) (*CustomClaims, error) {
 	}
 	return nil, TokenInvalid
 }
-

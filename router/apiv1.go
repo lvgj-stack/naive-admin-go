@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+
 	"naive-admin-go/api"
 	"naive-admin-go/middleware"
 )
@@ -19,6 +20,7 @@ func Init(r *gin.Engine) {
 	r.Use(middleware.Jwt())
 	r.POST("/auth/logout", api.Auth.Logout)
 	r.POST("/auth/password", api.Auth.Logout)
+	r.POST("/auth/current-role/switch/:role", api.Auth.SwitchRole)
 
 	r.GET("/user", api.User.List)
 	r.POST("/user", api.User.Add)
@@ -42,4 +44,5 @@ func Init(r *gin.Engine) {
 	r.DELETE("/permission/:id", api.Permissions.Delete)
 	r.GET("/permission/tree", api.Permissions.List)
 	r.GET("/permission/menu/tree", api.Permissions.List)
+	r.GET("/permission/button/:id", api.Permissions.Button)
 }

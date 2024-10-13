@@ -3,13 +3,16 @@ package api
 import (
 	"crypto/md5"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+
 	"naive-admin-go/db"
 	"naive-admin-go/inout"
 	"naive-admin-go/model"
-	"strconv"
-	"time"
+	"naive-admin-go/utils"
 )
 
 var User = &user{}
@@ -20,12 +23,17 @@ type user struct {
 func (user) Detail(c *gin.Context) {
 	var data = &inout.UserDetailRes{}
 	var uid, _ = c.Get("uid")
+	jwtToken, _ := c.Get("jwt_token")
+	claim := jwtToken.(*utils.CustomClaims)
+
 	db.Dao.Model(model.User{}).Where("id=?", uid).Find(&data)
 	db.Dao.Model(model.Profile{}).Where("userId=?", uid).Find(&data.Profile)
 	urolIdList := db.Dao.Model(model.UserRolesRole{}).Where("userId=?", uid).Select("roleId")
 	db.Dao.Model(model.Role{}).Where("id IN (?)", urolIdList).Find(&data.Roles)
-	if len(data.Roles) > 0 {
-		data.CurrentRole = data.Roles[0]
+	for _, r := range data.Roles {
+		if r.Code == claim.CurrentRoleCode {
+			data.CurrentRole = r
+		}
 	}
 	Resp.Succ(c, data)
 }

@@ -1,12 +1,14 @@
 package api
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+
 	"naive-admin-go/db"
 	"naive-admin-go/inout"
 	"naive-admin-go/model"
-	"strconv"
 )
 
 var Permissions = &permissions{}
@@ -64,7 +66,7 @@ func (permissions) Add(c *gin.Context) {
 		Name:      params.Name,
 		Code:      params.Code,
 		Type:      params.Type,
-		ParentId:  params.ParentId,// insert value null
+		ParentId:  params.ParentId, // insert value null
 		Path:      params.Path,
 		Icon:      params.Icon,
 		Component: params.Component,
@@ -101,20 +103,20 @@ func (permissions) PatchPermission(c *gin.Context) {
 		return
 	}
 
-	err = db.Dao.Model(model.Permission{}).Where("id=?",params.Id).Updates(model.Permission{
-		Name:        params.Name,
-		Code:        params.Code,
-		Type:        params.Type,
-		ParentId:    params.ParentId,
-		Path:        params.Path,
-		Icon:        params.Icon,
-		Component:   params.Component,
-		Layout:      params.Layout,
-		KeepAlive:   params.KeepAlive,
-		Method:      params.Component,
-		Show:        params.Show,
-		Enable:      params.Enable,
-		Order:       params.Order,
+	err = db.Dao.Model(model.Permission{}).Where("id=?", params.Id).Updates(model.Permission{
+		Name:      params.Name,
+		Code:      params.Code,
+		Type:      params.Type,
+		ParentId:  params.ParentId,
+		Path:      params.Path,
+		Icon:      params.Icon,
+		Component: params.Component,
+		Layout:    params.Layout,
+		KeepAlive: params.KeepAlive,
+		Method:    params.Component,
+		Show:      params.Show,
+		Enable:    params.Enable,
+		Order:     params.Order,
 	}).Error
 	if err != nil {
 		Resp.Err(c, 20001, err.Error())
@@ -128,4 +130,8 @@ func IsTrue(v bool) int {
 		return 1
 	}
 	return 0
+}
+
+func (permissions) Button(c *gin.Context) {
+	Resp.Succ(c, "")
 }

@@ -1,28 +1,25 @@
 package utils
 
 import (
-	"bytes"
-	"math/rand"
-	"strconv"
-	"time"
-
-	svg "github.com/ajstarks/svgo"
+	"github.com/mojocn/base64Captcha"
 )
 
-func GenerateSVG(width, height int) ([]byte,string) {
-	rand.Seed(time.Now().UnixNano())
+var store = base64Captcha.DefaultMemStore
 
-	var svgContent bytes.Buffer
-	canvas := svg.New(&svgContent)
-	canvas.Start(width, height)
-	canvas.Rect(0, 0, width, height, "fill:white")
-	canvas.Circle(width/2, height/2, width/2-5, "fill:#EEE")
+func GetCaptcha() (string, string, error) {
+	driver := &base64Captcha.DriverString{
+		Length:          4,
+		Height:          40,
+		Width:           80,
+		ShowLineOptions: base64Captcha.OptionShowHollowLine,
+		NoiseCount:      0,
+		Source:          "1234567890qwertyuioplkjhgfdsazxcvbnm",
+	}
 
-	code := strconv.Itoa(rand.Intn(9999))
-	canvas.Text(width/2, height/2, code, "text-anchor:middle; font-size:40px; fill:black;")
-
-	canvas.End()
-
-	return svgContent.Bytes(),code
+	c := base64Captcha.NewCaptcha(driver, store)
+	return c.Generate()
 }
 
+func VerifyCaptcha(id, VerifyValue string) bool {
+	return store.Verify(id, VerifyValue, true)
+}
