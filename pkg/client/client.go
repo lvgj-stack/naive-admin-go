@@ -31,6 +31,7 @@ func DoRequest[T any](ctx context.Context, method, group, action string, request
 	if err != nil {
 		return nil, err
 	}
+	req.Header.Set("Content-Type", "application/json")
 	res, err := client.Do(req)
 	if err != nil {
 		zap.S().Errorw("client do err", "err", err)
