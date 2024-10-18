@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"os"
@@ -44,6 +45,14 @@ func DoRequest[T any](ctx context.Context, method, group, action string, request
 	if err != nil {
 		zap.S().Errorw("io read err", "err", err)
 		return nil, err
+	}
+	if res.StatusCode != http.StatusOK {
+		r := make(map[string]interface{})
+		if err := json.Unmarshal(respBytes, &r); err != nil {
+			zap.S().Errorw("unmarshal err", "err", err)
+			return nil, err
+		}
+		return nil, errors.New(r["Error"].(string))
 	}
 	if err := json.Unmarshal(respBytes, &resp); err != nil {
 		zap.S().Errorw("unmarshal err", "err", err)
