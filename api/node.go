@@ -29,8 +29,34 @@ func (n *node[T]) Handle(c *gin.Context) {
 			Resp.Err(c, 20001, err.Error())
 			return
 		}
-		Resp.Succ(c, nodes.Nodes)
-
+		Resp.Succ(c, map[string]interface{}{
+			"pageData": nodes.Nodes,
+			"total":    nodes.TotalCount,
+		})
+	case "AddNode":
+		var req stander_req.AddNodeReq
+		if err := c.Bind(&req); err != nil {
+			Resp.Err(c, 20001, err.Error())
+			return
+		}
+		nodes, err := (&node[stander_resp.AddNodeResp]{}).Do(c, action, req)
+		if err != nil {
+			Resp.Err(c, 20001, err.Error())
+			return
+		}
+		Resp.Succ(c, nodes.Key)
+	case "DeleteNode":
+		var req stander_req.DelNodeReq
+		if err := c.Bind(&req); err != nil {
+			Resp.Err(c, 20001, err.Error())
+			return
+		}
+		nodes, err := (&node[stander_resp.DelNodeResp]{}).Do(c, action, req)
+		if err != nil {
+			Resp.Err(c, 20001, err.Error())
+			return
+		}
+		Resp.Succ(c, nodes.ID)
 	}
 }
 
