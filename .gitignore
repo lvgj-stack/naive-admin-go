@@ -1,2 +1,5 @@
 .idea
 mysql
+**/.env
+.env
+naive-admin-go

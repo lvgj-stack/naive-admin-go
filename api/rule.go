@@ -86,7 +86,7 @@ func (r *rule[T]) Handle(c *gin.Context) {
 }
 
 func (r *rule[T]) Do(c *gin.Context, action string, req any) (*T, error) {
-	resp, err := client.DoRequest[T](c.Request.Context(), http.MethodPost, "rule", action, req)
+	resp, err := client.DoRequest[T](c, http.MethodPost, "rule", action, req)
 	if err != nil {
 		return nil, err
 	}

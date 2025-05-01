@@ -10,11 +10,13 @@ type AuthPwReq struct {
 	OldPassword string `form:"oldPassword" binding:"required"`
 }
 type PatchUserReq struct {
-	Id       int     `json:"id"  binding:"required"`
-	Enable   *bool   `json:"enable,omitempty"`
-	RoleIds  *[]int  `json:"roleIds,omitempty"`
-	Password *string `json:"password,omitempty"`
-	Username *string `json:"username,omitempty"`
+	Id          int     `json:"id"  binding:"required"`
+	Enable      *bool   `json:"enable,omitempty"`
+	RoleIds     *[]int  `json:"roleIds,omitempty"`
+	Password    *string `json:"password,omitempty"`
+	Username    *string `json:"username,omitempty"`
+	OldPassword *string `json:"oldPassword,omitempty"`
+	NewPassword *string `json:"newPassword,omitempty"`
 }
 type PatchProfileUserReq struct {
 	Id       int    `json:"id"  binding:"required"`

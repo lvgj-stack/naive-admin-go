@@ -57,11 +57,47 @@ func (n *node[T]) Handle(c *gin.Context) {
 			return
 		}
 		Resp.Succ(c, nodes.ID)
+	case "EditNode":
+		var req stander_req.EditNodeReq
+		if err := c.Bind(&req); err != nil {
+			Resp.Err(c, 20001, err.Error())
+			return
+		}
+		_, err := (&node[stander_resp.EditNodeResp]{}).Do(c, action, req)
+		if err != nil {
+			Resp.Err(c, 20001, err.Error())
+			return
+		}
+		Resp.Succ(c, nil)
+	case "ListNodeChainRelationShips":
+		var req stander_req.ListNodeChainRelationShipsReq
+		if err := c.Bind(&req); err != nil {
+			Resp.Err(c, 20001, err.Error())
+			return
+		}
+		ret, err := (&node[stander_resp.ListNodeChainRelationShipsResp]{}).Do(c, action, req)
+		if err != nil {
+			Resp.Err(c, 20001, err.Error())
+			return
+		}
+		Resp.Succ(c, ret.Chains)
+	case "GetNodePermissions":
+		var req stander_req.EmptyReq
+		if err := c.Bind(&req); err != nil {
+			Resp.Err(c, 20001, err.Error())
+			return
+		}
+		ret, err := (&node[[]int64]{}).Do(c, action, req)
+		if err != nil {
+			Resp.Err(c, 20001, err.Error())
+			return
+		}
+		Resp.Succ(c, ret)
 	}
 }
 
 func (n *node[T]) Do(c *gin.Context, action string, req any) (*T, error) {
-	resp, err := client.DoRequest[T](c.Request.Context(), http.MethodPost, "node", action, req)
+	resp, err := client.DoRequest[T](c, http.MethodPost, "node", action, req)
 	if err != nil {
 		return nil, err
 	}

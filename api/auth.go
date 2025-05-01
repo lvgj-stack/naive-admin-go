@@ -43,7 +43,7 @@ func (auth) Login(c *gin.Context) {
 		return
 	}
 	session := sessions.Default(c)
-	if !utils.VerifyCaptcha(session.Get("captch").(string), params.Captcha) {
+	if !utils.VerifyCaptcha(session.Get("captch").(string), strings.ToLower(params.Captcha)) {
 		Resp.Err(c, 20001, "验证码不正确")
 		return
 	}

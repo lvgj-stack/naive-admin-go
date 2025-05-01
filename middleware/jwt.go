@@ -35,6 +35,7 @@ func Jwt() gin.HandlerFunc {
 
 		// 继续交由下一个路由处理,并将解析出的信息传递下去
 		c.Set("uid", claims.UID)
+		c.Set("roleId", claims.CurrentRoleCode)
 		c.Set("jwt_token", claims)
 		c.Next()
 	}

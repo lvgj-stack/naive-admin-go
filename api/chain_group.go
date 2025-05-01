@@ -10,48 +10,48 @@ import (
 	"naive-admin-go/pkg/client"
 )
 
-var Chain = &chain[any]{}
+var ChainGroup = &chainGroup[any]{}
 
-type chain[T any] struct {
+type chainGroup[T any] struct {
 }
 
-func (ch *chain[T]) Handle(c *gin.Context) {
+func (ch *chainGroup[T]) Handle(c *gin.Context) {
 	action := c.Query("Action")
 	switch action {
-	case "ListChains":
-		var req stander_req.ListChainReq
+	case "ListChainGroups":
+		var req stander_req.ListChainGroupReq
 		if err := c.Bind(&req); err != nil {
 			Resp.Err(c, 20001, err.Error())
 			return
 		}
-		chains, err := (&chain[stander_resp.ListChainResp]{}).Do(c, action, req)
+		chains, err := (&chainGroup[stander_resp.ListChainGroupsResp]{}).Do(c, action, req)
 		if err != nil {
 			Resp.Err(c, 20001, err.Error())
 			return
 		}
 		Resp.Succ(c, map[string]interface{}{
-			"pageData": chains.Chains,
-			"total":    chains.TotalCount,
+			"pageData": chains.ChainGroups,
+			"total":    0,
 		})
-	case "AddChain":
-		var req stander_req.AddChainReq
+	case "AddChainGroup":
+		var req stander_req.AddChainGroupReq
 		if err := c.Bind(&req); err != nil {
 			Resp.Err(c, 20001, err.Error())
 			return
 		}
-		chains, err := (&chain[stander_resp.AddChainResp]{}).Do(c, action, req)
+		chains, err := (&chainGroup[stander_resp.AddChainGroupResp]{}).Do(c, action, req)
 		if err != nil {
 			Resp.Err(c, 20001, err.Error())
 			return
 		}
 		Resp.Succ(c, chains)
-	case "DeleteChain":
-		var req stander_req.DelChainReq
+	case "DeleteChainGroup":
+		var req stander_req.DelChainGroupReq
 		if err := c.Bind(&req); err != nil {
 			Resp.Err(c, 20001, err.Error())
 			return
 		}
-		chains, err := (&chain[stander_resp.DelChainResp]{}).Do(c, action, req)
+		chains, err := (&chainGroup[stander_resp.EmptyResp]{}).Do(c, action, req)
 		if err != nil {
 			Resp.Err(c, 20001, err.Error())
 			return
@@ -69,21 +69,9 @@ func (ch *chain[T]) Handle(c *gin.Context) {
 			return
 		}
 		Resp.Succ(c, nil)
-	case "GetChainPermissions":
-		var req stander_req.EmptyReq
-		if err := c.Bind(&req); err != nil {
-			Resp.Err(c, 20001, err.Error())
-			return
-		}
-		res, err := (&chain[[]int64]{}).Do(c, action, req)
-		if err != nil {
-			Resp.Err(c, 20001, err.Error())
-			return
-		}
-		Resp.Succ(c, res)
 	}
 }
-func (ch *chain[T]) Do(c *gin.Context, action string, req any) (*T, error) {
+func (ch *chainGroup[T]) Do(c *gin.Context, action string, req any) (*T, error) {
 	resp, err := client.DoRequest[T](c, http.MethodPost, "chain", action, req)
 	if err != nil {
 		return nil, err
