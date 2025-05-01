@@ -1,10 +1,13 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
+
 var Resp = &rps{}
+
 type rps struct {
 	Code      int         `json:"code"`
 	Message   string      `json:"message"`
@@ -13,7 +16,7 @@ type rps struct {
 	OriginUrl string      `json:"originUrl"`
 }
 
-func (rps)Succ(c *gin.Context, data interface{}) {
+func (rps) Succ(c *gin.Context, data interface{}) {
 	resp := rps{
 		Code:      0,
 		Message:   "OK",
@@ -24,7 +27,7 @@ func (rps)Succ(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func (rps)Err(c *gin.Context, ErrCode int, messge string) {
+func (rps) Err(c *gin.Context, ErrCode int, messge string) {
 	resp := rps{
 		Code:      ErrCode,
 		Error:     "error some",

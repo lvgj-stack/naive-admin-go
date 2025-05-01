@@ -62,7 +62,7 @@ func GenerateToken(uId, userId int, username, currentRoleCode string, roleCodes 
 		roleCodes,
 		currentRoleCode,
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * 30 * time.Hour)),
 		},
 	}
 

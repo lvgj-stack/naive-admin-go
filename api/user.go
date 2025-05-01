@@ -65,7 +65,7 @@ func (user) List(c *gin.Context) {
 	orm.Offset((pageNo - 1) * pageSize).Limit(pageSize).Find(&profileList)
 	for _, datum := range profileList {
 		var uinfo model.User
-		db.Dao.Model(model.User{}).Where("id=?", datum.UserId).First(&uinfo)
+		db.Dao.Model(&model.User{}).Where("ID = ?", datum.UserId).First(&uinfo)
 		var rols []*model.Role
 		db.Dao.Model(model.Role{}).Where("id IN (?)", db.Dao.Model(model.UserRolesRole{}).Where("userId=?", datum.UserId).Select("roleId")).Find(&rols)
 		data.PageData = append(data.PageData, inout.UserListItem{
@@ -112,6 +112,12 @@ func (user) Update(c *gin.Context) {
 		return
 	}
 	orm := db.Dao.Model(model.User{}).Where("id=?", params.Id)
+	if params.OldPassword != nil {
+		orm.Where("password=?", fmt.Sprintf("%x", md5.Sum([]byte(*params.OldPassword))))
+	}
+	if params.NewPassword != nil {
+		orm.Update("password", fmt.Sprintf("%x", md5.Sum([]byte(*params.NewPassword))))
+	}
 	if params.Password != nil {
 		orm.Update("password", fmt.Sprintf("%x", md5.Sum([]byte(*params.Password))))
 	}
@@ -145,7 +151,10 @@ func (user) Add(c *gin.Context) {
 		return
 	}
 	err = db.Dao.Transaction(func(tx *gorm.DB) error {
+		var id int
+		tx.Model(&model.User{}).Select("max(id)").First(&id)
 		var newUser = model.User{
+			ID:         id + 1,
 			Username:   params.Username,
 			Password:   fmt.Sprintf("%x", md5.Sum([]byte(params.Password))),
 			Enable:     params.Enable,
@@ -157,6 +166,7 @@ func (user) Add(c *gin.Context) {
 			return err
 		}
 		tx.Create(&model.Profile{
+			ID:       id + 1,
 			UserId:   newUser.ID,
 			NickName: newUser.Username,
 		})

@@ -45,4 +45,10 @@ func Init(r *gin.Engine) {
 	r.GET("/permission/tree", api.Permissions.List)
 	r.GET("/permission/menu/tree", api.Permissions.List)
 	r.GET("/permission/button/:id", api.Permissions.Button)
+
+	r.POST("/stander/node", api.Node.Handle)
+	r.POST("/stander/chain", api.Chain.Handle)
+	r.POST("/stander/rule", api.Rule.Handle)
+	r.POST("/stander/user", api.StanderUser.Handle)
+	r.POST("/stander/chain-group", api.ChainGroup.Handle)
 }

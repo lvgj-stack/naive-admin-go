@@ -1,16 +1,16 @@
 package api
 
 import (
+	"log"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"log"
 
 	"naive-admin-go/db"
 	"naive-admin-go/inout"
 	"naive-admin-go/model"
 	"naive-admin-go/utils"
-
-	"strconv"
 )
 
 var Role = &role{}
@@ -18,6 +18,8 @@ var Role = &role{}
 type role struct {
 }
 
+// 2025/01/01 15:16:21 1 &{1 1 admin [SUPER_ADMIN USER] SUPER_ADMIN {  [] 2025-01-02 15:04:12 +0800 CST <nil> <nil> }}
+// 2025/01/01 15:16:21 SUPER_ADMIN
 func (role) PermissionsTree(c *gin.Context) {
 	var uid, _ = c.Get("uid")
 	jwtToken, _ := c.Get("jwt_token")
@@ -25,7 +27,7 @@ func (role) PermissionsTree(c *gin.Context) {
 	log.Println(uid, claim)
 	log.Println(claim.CurrentRoleCode)
 	var adminRole int64
-	db.Dao.Model(model.UserRolesRole{}).Where("userId=? and roleId=?", uid, claim.CurrentRoleCode).Count(&adminRole)
+	db.Dao.Model(model.UserRolesRole{}).Where("userId=? and roleId=1", uid).Count(&adminRole)
 	orm := db.Dao.Model(model.Permission{}).Where("parentId is NULL").Order("`order` Asc")
 
 	if adminRole == 0 {
