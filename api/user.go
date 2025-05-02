@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
+	stander_req "github.com/Mr-LvGJ/stander/pkg/service/req"
 	"naive-admin-go/db"
 	"naive-admin-go/inout"
 	"naive-admin-go/model"
@@ -150,8 +151,8 @@ func (user) Add(c *gin.Context) {
 		Resp.Err(c, 20001, err.Error())
 		return
 	}
+	var id int
 	err = db.Dao.Transaction(func(tx *gorm.DB) error {
-		var id int
 		tx.Model(&model.User{}).Select("max(id)").First(&id)
 		var newUser = model.User{
 			ID:         id + 1,
@@ -179,6 +180,13 @@ func (user) Add(c *gin.Context) {
 		return nil
 	})
 	if err != nil {
+		Resp.Err(c, 20001, err.Error())
+		return
+	}
+	ginC := new(gin.Context)
+	ginC.Set("roleId", "")
+	ginC.Set("uid", id+1)
+	if _, err := Plan.Do(ginC, "AssociatePlan", &stander_req.AssociatePlanReq{PlanId: int64(params.PlanId), UserId: int32(id + 1)}); err != nil {
 		Resp.Err(c, 20001, err.Error())
 		return
 	}

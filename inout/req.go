@@ -36,6 +36,7 @@ type AddUserReq struct {
 	Password string `json:"password" binding:"required"`
 	Enable   bool   `json:"enable" binding:"required"`
 	RoleIds  []int  `json:"roleIds" binding:"required"`
+	PlanId   int32  `json:"planId"`
 }
 
 type AddRoleReq struct {

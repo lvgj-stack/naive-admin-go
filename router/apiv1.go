@@ -51,4 +51,5 @@ func Init(r *gin.Engine) {
 	r.POST("/stander/rule", api.Rule.Handle)
 	r.POST("/stander/user", api.StanderUser.Handle)
 	r.POST("/stander/chain-group", api.ChainGroup.Handle)
+	r.POST("/stander/plan", api.Plan.Handle)
 }
